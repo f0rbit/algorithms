@@ -1,7 +1,7 @@
 #include <iostream>
 #include <queue>
-#include <vector>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -25,31 +25,30 @@ class LinkedList {
 public:
   Node *head = nullptr;
 
-    void insert(int value) {
-        Node* new_node = new Node(value);
-        if (head == nullptr) {
-            head = new_node;
-            return;
-        }
-        Node* curr = head;
-        while (curr->next) {
-            curr = curr->next;
-        }
-        curr->next = new_node;
-    }   
-
-    string toString() {
-        string res = "";
-        // curr node to keep track of position
-        Node* curr = head;
-        while (curr) {
-            res += to_string(curr->value) + ",";
-            curr = curr->next; 
-        }
-        // remove trailing comma
-        return res.substr(0, res.length() - 1);
+  void insert(int value) {
+    Node *new_node = new Node(value);
+    if (head == nullptr) {
+      head = new_node;
+      return;
     }
-    
+    Node *curr = head;
+    while (curr->next) {
+      curr = curr->next;
+    }
+    curr->next = new_node;
+  }
+
+  string toString() {
+    string res = "";
+    // curr node to keep track of position
+    Node *curr = head;
+    while (curr) {
+      res += to_string(curr->value) + ",";
+      curr = curr->next;
+    }
+    // remove trailing comma
+    return res.substr(0, res.length() - 1);
+  }
 };
 
 int main() {
