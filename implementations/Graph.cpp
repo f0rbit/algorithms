@@ -1,12 +1,12 @@
 #include <iostream>
 #include <list>
-#include <unordered_map>
+#include <map>
 
 using namespace std;
 
 class Graph {
    private:
-    unordered_map<int, list<int>> adj;
+    map<int, list<int>> adj;
 
    public:
     void add(int vertex) {
