@@ -1,2 +1,3 @@
 # ignore any compiled files
 *.out
+*.exe
