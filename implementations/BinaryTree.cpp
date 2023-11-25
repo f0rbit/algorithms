@@ -88,30 +88,32 @@ class BinaryTree {
 		}
 		if (value < node->value) {
 			node->left = remove(node->left, value);
-		} else if (value > node->value) {
+			return node;
+		} 
+		if (value > node->value) {
 			node->right = remove(node->right, value);
+			return node;
+		}
+		// we found the node to delete
+		if (!node->left && !node->right) {
+			// no children
+			delete node;
+			return nullptr;
+		} else if (!node->left) {
+			// one child
+			Node* temp = node->right;
+			delete node;
+			return temp;
+		} else if (!node->right) {
+			// one child
+			Node* temp = node->left;
+			delete node;
+			return temp;
 		} else {
-			// we found the node to delete
-			if (!node->left && !node->right) {
-				// no children
-				delete node;
-				return nullptr;
-			} else if (!node->left) {
-				// one child
-				Node* temp = node->right;
-				delete node;
-				return temp;
-			} else if (!node->right) {
-				// one child
-				Node* temp = node->left;
-				delete node;
-				return temp;
-			} else {
-				// two children
-				Node* temp = minimum(node->right);
-				node->value = temp->value;
-				node->right = remove(node->right, temp->value);
-			}
+			// two children
+			Node* temp = minimum(node->right);
+			node->value = temp->value;
+			node->right = remove(node->right, temp->value);
 		}
 		return node;
 	}

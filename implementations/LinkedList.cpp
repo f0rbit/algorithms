@@ -101,10 +101,27 @@ class LinkedList {
 };
 
 int main() {
-    LinkedList *list = new LinkedList();
-    list->insert(1);
-    list->insert(2);
-    list->insert(3);
+    LinkedList list;
 
-    cout << list->toString() << endl;
+    // Test 1: Insert elements
+    list.insert(5);
+    list.insert(10);
+    list.insert(15);
+    cout << "Inserted elements: " << list.toString() << endl; // Output: 15,10,5
+
+    // Test 2: Remove element
+    list.remove(10);
+    cout << "After removing 10: " << list.toString() << endl; // Output: 15,5
+
+    // Test 3: Contains
+    cout << "Contains 5? " << (list.contains(5) ? "Yes" : "No") << endl; // Output: Yes
+    cout << "Contains 10? " << (list.contains(10) ? "Yes" : "No") << endl; // Output: No
+
+    // Test 4: Size
+    cout << "Size of the list: " << list.size() << endl; // Output: 2
+
+    // Test 5: Get element at index
+    cout << "Element at index 1: " << list.get(1) << endl; // Output: 5
+
+    return 0;
 }
