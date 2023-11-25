@@ -40,7 +40,6 @@ class Graph {
         }
         cout << endl;
     }
-
 };
 
 int main() {
@@ -54,15 +53,15 @@ int main() {
     graph.connect(1, 3);
     graph.connect(2, 3);
 
-    graph.print(); // expected: 1: { 2, 3 }, 2: { 1, 3 }, 3: { 1, 2 }
+    graph.print();  // expected: 1: { 2, 3 }, 2: { 1, 3 }, 3: { 1, 2 }
 
     graph.remove_connection(1, 2);
 
-    graph.print(); // expected: 1: { 3 }, 2: { 3 }, 3: { 1, 2 }
+    graph.print();  // expected: 1: { 3 }, 2: { 3 }, 3: { 1, 2 }
 
     graph.remove(1);
 
-    graph.print(); // expected: 2: { 3 }, 3: { 2 }
+    graph.print();  // expected: 2: { 3 }, 3: { 2 }
 
     return 0;
 }
