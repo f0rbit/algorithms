@@ -31,6 +31,7 @@ class Node {
 
     // remove a neighbor with given value
     void remove_neighbor(int value) {
+		// lambda function to remove a node from a vector
         neighbors.erase(remove_if(neighbors.begin(), neighbors.end(), [value](Node* neighbor) { return neighbor->data == value; }), neighbors.end());
     }
 };
@@ -56,7 +57,7 @@ class Graph {
 
     // find a node with given value using BFS
     Node* bfs_search(int target) {
-        queue<Node*> bfs_queue;
+        queue<Node*> bfs_queue; // queue is the important data structure for BFS
         set<Node*> visited;
 
         bfs_queue.push(root);
@@ -104,7 +105,9 @@ class Graph {
 
         // recursively search in unvisited neighbors
         for (Node* neighbor : current->neighbors) {
+			// check to see if we have visited this node before
             if (visited.find(neighbor) == visited.end()) {
+				// if not, perform search on neighbor.
 				Node* result = dfs_search_recursive(neighbor, target, visited);
                 if (result != nullptr) {
                     return result;

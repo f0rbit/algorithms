@@ -36,7 +36,7 @@ class BinaryTree {
             return new Node(value);
         }
 
-        // we ignore same-value scenarios.
+        // we ignore same-value scenarios (this tree contains no duplicates).
         if (value < root->value) {
             root->left = insert(root->left, value);
         } else if (value > root->value) {
