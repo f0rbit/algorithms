@@ -3,13 +3,13 @@ ROOT_DIR=$(pwd)
 
 # Function to list all files in numerical order
 list_files() {
-  find "${ROOT_DIR}" -type f -name '*.ts' | sort -t'-' -k1,1n | xargs -n 1 basename | sort -V
+	find "${ROOT_DIR}" -type f \( -name '*.ts' -o -name '*.cpp' \) | sort -t'-' -k1,1n | xargs -n 1 basename | sort -V
 }
 
 # Function to find a specific problem number
 find_problem() {
   local problem_number="$1"
-  local file_path=$(find "${ROOT_DIR}" -type f -name "${problem_number}-*.ts")
+	local file_path=$(find "${ROOT_DIR}" -type f \( -name "${problem_number}-*.ts" -o -name "${problem_number}-*.cpp" \))
   
   if [ -n "${file_path}" ]; then
     echo "found @ ${file_path}"
