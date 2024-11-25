@@ -6,7 +6,7 @@ using namespace std;
 
 class Graph {
    private:
-    map<int, list<int>> adj;
+    map<int, list<int> > adj;
 
    public:
     void add(int vertex) {
