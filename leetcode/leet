@@ -1,0 +1,184 @@
+#!/bin/bash
+cd "$(dirname "$0")"
+
+diff_prefix() {
+    case "$1" in
+        easy)   echo "e" ;;
+        medium) echo "m" ;;
+        hard)   echo "h" ;;
+        *)      echo "$1" ;;
+    esac
+}
+
+add_cargo_test() {
+    local test_name="$1"
+    local file_path="$2"
+    echo "" >> Cargo.toml
+    echo "[[test]]" >> Cargo.toml
+    echo "name = \"$test_name\"" >> Cargo.toml
+    echo "path = \"$file_path\"" >> Cargo.toml
+}
+
+case "$1" in
+    new)
+        if [ $# -ne 4 ]; then
+            echo "Usage: $0 new <difficulty> <number> <name>"
+            exit 1
+        fi
+
+        difficulty="$2"
+        number="$3"
+        name="$4"
+        prefix=$(diff_prefix "$difficulty")
+        file_path="$difficulty/$number-$name.rs"
+
+        if [ -f "$file_path" ]; then
+            echo "File $file_path already exists"
+            exit 1
+        fi
+
+        mkdir -p "$difficulty"
+
+        display_name=$(echo "$name" | tr '_' ' ' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)}1')
+        url_name=$(echo "$name" | sed 's/_/-/g')
+
+        cat > "$file_path" << EOF
+// $number. $display_name
+// https://leetcode.com/problems/$url_name/
+// Difficulty: $difficulty
+// Time: O(?) Space: O(?)
+
+pub fn solution() {
+    todo!()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_1() {
+        todo!("write test cases")
+    }
+}
+EOF
+
+        test_name="${prefix}_${number}_$name"
+        add_cargo_test "$test_name" "$file_path"
+        echo "$file_path"
+        ;;
+
+    sync)
+        awk '/^\[\[test\]\]/{exit} {print}' Cargo.toml | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' > Cargo.toml.tmp
+
+        for dir in easy medium hard; do
+            if [ -d "$dir" ]; then
+                find "$dir" -name "*.rs" -type f | sort -V
+            fi
+        done | while read -r file; do
+            if [ -n "$file" ]; then
+                dir=$(dirname "$file")
+                filename=$(basename "$file" .rs)
+                test_name="$(diff_prefix "$dir")_$(echo "$filename" | sed 's/-/_/g')"
+                echo "" >> Cargo.toml.tmp
+                echo "[[test]]" >> Cargo.toml.tmp
+                echo "name = \"$test_name\"" >> Cargo.toml.tmp
+                echo "path = \"$file\"" >> Cargo.toml.tmp
+            fi
+        done
+
+        mv Cargo.toml.tmp Cargo.toml
+        echo "Synced Cargo.toml"
+        ;;
+
+    random)
+        if [ $# -ne 2 ]; then
+            echo "Usage: $0 random <easy|medium|hard>"
+            exit 1
+        fi
+
+        difficulty="$2"
+        max_attempts=10
+        for i in $(seq 1 $max_attempts); do
+            slug=$(python3 "$(dirname "$0")/.leet_fetch.py" --random "$difficulty")
+            if [ $? -ne 0 ]; then
+                echo "Failed to fetch random problem"
+                exit 1
+            fi
+            name=$(echo "$slug" | tr '-' '_')
+            existing=$(find easy medium hard -name "*-${name}.*" 2>/dev/null)
+            if [ -z "$existing" ]; then
+                exec "$0" pull "$slug" "$difficulty"
+            fi
+        done
+        echo "Couldn't find an unsolved problem after $max_attempts attempts"
+        exit 1
+        ;;
+
+    pull)
+        if [ $# -lt 2 ]; then
+            echo "Usage: $0 pull <slug> [difficulty]"
+            exit 1
+        fi
+
+        slug="$2"
+        override_diff="$3"
+
+        python3 "$(dirname "$0")/.leet_fetch.py" "$slug" > /tmp/leet_pull.rs 2>/tmp/leet_meta.txt
+        if [ $? -ne 0 ]; then
+            cat /tmp/leet_meta.txt
+            exit 1
+        fi
+
+        read -r qid diff _ < /tmp/leet_meta.txt
+        difficulty="${override_diff:-$diff}"
+        prefix=$(diff_prefix "$difficulty")
+        name=$(echo "$slug" | tr '-' '_')
+        file_path="$difficulty/$qid-$name.rs"
+
+        if [ -f "$file_path" ]; then
+            echo "File $file_path already exists"
+            exit 1
+        fi
+
+        mkdir -p "$difficulty"
+        mv /tmp/leet_pull.rs "$file_path"
+
+        test_name="${prefix}_${qid}_$name"
+        add_cargo_test "$test_name" "$file_path"
+        echo "$file_path"
+        ;;
+
+    list)
+        for dir in easy medium hard; do
+            if [ -d "$dir" ]; then
+                find "$dir" -type f \( -name "*.rs" -o -name "*.cpp" -o -name "*.ts" \) | sort -V
+            fi
+        done
+        ;;
+
+    find)
+        if [ $# -ne 2 ]; then
+            echo "Usage: $0 find <number>"
+            exit 1
+        fi
+
+        number="$2"
+        for dir in easy medium hard; do
+            if [ -d "$dir" ]; then
+                find "$dir" -type f \( -name "$number-*.rs" -o -name "$number-*.cpp" -o -name "$number-*.ts" \)
+            fi
+        done
+        ;;
+
+    *)
+        echo "Usage: $0 {new|sync|pull|random|list|find}"
+        echo "  new <difficulty> <number> <name>  - Create new problem file"
+        echo "  sync                              - Regenerate Cargo.toml test entries"
+        echo "  pull <slug> [difficulty]          - Pull problem from LeetCode"
+        echo "  random <difficulty>               - Pull a random unsolved problem"
+        echo "  list                              - List all problem files"
+        echo "  find <number>                     - Find problem by number"
+        exit 1
+        ;;
+esac

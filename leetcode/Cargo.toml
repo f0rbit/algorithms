@@ -1,0 +1,8 @@
+[package]
+name = "leetcode"
+version = "0.1.0"
+edition = "2021"
+
+[[test]]
+name = "e_789_kth_largest_element_in_a_stream"
+path = "easy/789-kth_largest_element_in_a_stream.rs"
