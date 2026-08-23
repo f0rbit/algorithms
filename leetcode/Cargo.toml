@@ -1,7 +1,7 @@
 [package]
 name = "leetcode"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [[test]]
 name = "e_789_kth_largest_element_in_a_stream"
@@ -9,3 +9,7 @@ path = "easy/789-kth_largest_element_in_a_stream.rs"
 [[test]]
 name = "e_4371_maximize_pair_strength_using_gcd"
 path = "easy/4371-maximize_pair_strength_using_gcd.rs"
+
+[[test]]
+name = "e_350_intersection_of_two_arrays_ii"
+path = "easy/350-intersection_of_two_arrays_ii.rs"
