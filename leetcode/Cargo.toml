@@ -6,3 +6,6 @@ edition = "2021"
 [[test]]
 name = "e_789_kth_largest_element_in_a_stream"
 path = "easy/789-kth_largest_element_in_a_stream.rs"
+[[test]]
+name = "e_4371_maximize_pair_strength_using_gcd"
+path = "easy/4371-maximize_pair_strength_using_gcd.rs"
